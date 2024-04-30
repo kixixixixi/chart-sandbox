@@ -33,6 +33,7 @@ const Page: NextPage = () => {
             .map((d) => ({
               x: d.projected[0],
               y: d.projected[1],
+              z: d.text,
             })),
         }))
       )
