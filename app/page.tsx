@@ -9,22 +9,10 @@ const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 })
 
-const colors = ["#ff0", "#0ff"] as const
-
 const Page: NextPage = () => {
   const [dataText, setDataText] = useState<string>("")
   const [dataError, setDataError] = useState<string>()
-  const [data, setData] = useState<
-    {
-      name: string
-      group: string
-      data: {
-        x: number
-        y: number
-        fillColor: string
-      }[]
-    }[]
-  >()
+  const [data, setData] = useState<ApexAxisChartSeries>()
   useEffect(() => {
     setDataError(undefined)
     if (dataText.length < 4) return
@@ -33,19 +21,18 @@ const Page: NextPage = () => {
         embedding: undefined
         projected: number[]
         text: string
-        name: string
+        group: string
       }[] = JSON.parse(dataText)
-      const series = [...new Set(data.map((d) => d.name))]
+      const series = [...new Set(data.map((d) => d.group))]
       setData(
-        series.map((s, i) => ({
+        series.map((s) => ({
           name: s,
-          group: s,
           data: data
-            .filter((d) => d.name == s)
+            .filter((d) => d.group == s)
+            .slice(0, 1000)
             .map((d) => ({
               x: d.projected[0],
               y: d.projected[1],
-              fillColor: colors[i % colors.length],
             })),
         }))
       )
@@ -53,7 +40,13 @@ const Page: NextPage = () => {
       setDataError(`${e}`)
     }
   }, [dataText])
-  const options: ApexOptions = {}
+  const options: ApexOptions = {
+    chart: { animations: { enabled: false } },
+    xaxis: {
+      type: "numeric",
+      tickAmount: 8,
+    },
+  }
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
   }
