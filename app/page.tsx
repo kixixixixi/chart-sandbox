@@ -90,7 +90,7 @@ const Page: NextPage = () => {
             options={options}
             series={data}
             width={"100%"}
-            height={400}
+            height={800}
           />
         </section>
       )}
